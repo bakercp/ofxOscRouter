@@ -22,7 +22,9 @@ using Poco::icompare;
 class ofxOscRouterNode {
 
 public:
-	
+
+	// TODO: automaticaly add and remove slashes as needed
+    
     ofxOscRouterNode();
     ofxOscRouterNode(string _nodeName);
 
