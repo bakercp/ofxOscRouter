@@ -186,7 +186,7 @@ bool ofxOscRouterNode::isMatch(string s0, string s1) {
 }
 
 //--------------------------------------------------------------
-bool ofxOscRouterNode::toBoolean(ofxOscMessage& m, int index) {
+bool ofxOscRouterNode::getArgAsBoolean(ofxOscMessage& m, int index) {
     if(m.getNumArgs() < index) {
         ofxOscArgType argType = m.getArgType(index);
         if(argType == OFXOSC_TYPE_INT32) {
@@ -201,7 +201,6 @@ bool ofxOscRouterNode::toBoolean(ofxOscMessage& m, int index) {
     } else {
         return false;
     }
-    
 }
 
 //--------------------------------------------------------------

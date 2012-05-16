@@ -57,9 +57,10 @@ public:
     void addOscMethod(string _method);
     bool removeOscMethod(string _method);
     bool isMatch(string s0, string s1);
-    bool toBoolean(ofxOscMessage& m, int index);
     bool validateOscSignature(string signature, ofxOscMessage& m); 
     
+    // supplementary
+    bool getArgAsBoolean(ofxOscMessage& m, int index);
 
 protected:
 	
