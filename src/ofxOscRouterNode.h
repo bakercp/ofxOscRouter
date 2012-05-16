@@ -24,7 +24,10 @@ class ofxOscRouterNode {
 public:
 
 	// TODO: automaticaly add and remove slashes as needed
-    
+    // TODO: Pattern matching with methods
+    // http://opensoundcontrol.org/spec-1_0-examples#OSCstrings
+    // Order of Invocation of OSC Methods matched
+    //  by OSC Messages in an OSC Bundle
     ofxOscRouterNode();
     ofxOscRouterNode(string _nodeName);
 
@@ -50,9 +53,9 @@ public:
     vector<ofxOscRouterNode*> getOscChildren(); 
     void addOscChild(ofxOscRouterNode* oscChild);
     bool removeOscChild(ofxOscRouterNode* oscChild);
-    bool hasOscCommand(string _command);
-    void addOscCommand(string _command);
-    bool removeOscCommand(string _command);
+    bool hasOscMethod(string _method);
+    void addOscMethod(string _method);
+    bool removeOscMethod(string _method);
     bool isMatch(string s0, string s1);
     bool toBoolean(ofxOscMessage& m, int index);
     bool validateOscSignature(string signature, ofxOscMessage& m); 
@@ -64,6 +67,6 @@ protected:
     
     ofxOscRouterNode* oscParent;
     vector<ofxOscRouterNode*> oscChildren;
-    vector<string> oscCommands;
+    set<string> oscMethods;
 
 };

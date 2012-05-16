@@ -44,8 +44,8 @@ void ofxOscRouterNode::routeOscMessage(string pattern, ofxOscMessage& m) {
     } else if(matchResult == OSC_MATCH_ADDRESS_COMPLETE) {
         pattern = pattern.substr(pattrOffset);
         
-        if(hasOscCommand(pattern)) {// || children.size() <= 0) {
-            ofLog(OF_LOG_VERBOSE, "\t\t\t" + getOscNodeName() + " had the command : " +  m.getAddress());
+        if(hasOscMethod(pattern)) {// || children.size() <= 0) {
+            ofLog(OF_LOG_VERBOSE, "\t\t\t" + getOscNodeName() + " had the method : " +  m.getAddress());
             processOscMessage(pattern, m);
         } else {
             for(int i = 0; i < oscChildren.size(); i++) { 
@@ -166,32 +166,18 @@ bool ofxOscRouterNode::removeOscChild(ofxOscRouterNode* oscChild) {
 }
 
 //--------------------------------------------------------------
-bool ofxOscRouterNode::hasOscCommand(string _command) {
-    vector<string>::iterator it;
-    
-    // iterator to vector element:
-    it = find (oscCommands.begin(), oscCommands.end(), _command);
-    return it != oscCommands.end();
+bool ofxOscRouterNode::hasOscMethod(string _method) {
+    return oscMethods.find(_method) != oscMethods.end();
 }
 
 //--------------------------------------------------------------
-void ofxOscRouterNode::addOscCommand(string _command) {
-    oscCommands.push_back(_command);
+void ofxOscRouterNode::addOscMethod(string _command) {
+    oscMethods.insert(_command);
 }
 
 //--------------------------------------------------------------
-bool ofxOscRouterNode::removeOscCommand(string _command) {
-    vector<string>::iterator it;
-    
-    // iterator to vector element:
-    it = find (oscCommands.begin(), oscCommands.end(), _command);
-    
-    if(it != oscCommands.end()) {
-        oscCommands.erase(it);
-        return true;
-    } else {
-        return false;
-    }    
+bool ofxOscRouterNode::removeOscMethod(string _command) {
+    oscMethods.erase(_command);
 }
 
 //--------------------------------------------------------------
