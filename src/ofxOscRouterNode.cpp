@@ -43,6 +43,9 @@ void ofxOscRouterNode::routeOscMessage(string pattern, ofxOscMessage& m) {
     if(matchResult == 0) {
         set<string>::iterator it;
         for(it = oscNodeNameAliases.begin(); it != oscNodeNameAliases.end(); it++ ) {
+            pattrOffset = 0;
+            addrOffset  = 0;
+            matchResult = 0;
             char* _thisAlias = (char*)(*it).c_str();
             matchResult = osc_match(_pattern, _thisAlias, &pattrOffset, &addrOffset);
             if(matchResult != 0) {
