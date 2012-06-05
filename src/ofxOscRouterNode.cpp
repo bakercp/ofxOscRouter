@@ -29,13 +29,29 @@ void ofxOscRouterNode::routeOscMessage(string pattern, ofxOscMessage& m) {
     ofLog(OF_LOG_VERBOSE, "ofxOscRouterNode: " + getOscNodeName() + " processing : " +  m.getAddress());
     
     
-    int pattrOffset,addrOffset,matchResult;
+    int pattrOffset = 0;
+    int addrOffset  = 0;
+    int matchResult = 0;
     
     char* _pattern = (char*)pattern.c_str();
     char* _thisAddress = (char*)oscNodeName.c_str();
     
+    // check our main node name
     matchResult = osc_match(_pattern, _thisAddress, &pattrOffset, &addrOffset);
+        
+    // check our aliases
+    if(matchResult == 0) {
+        set<string>::iterator it;
+        for(it = oscNodeNameAliases.begin(); it != oscNodeNameAliases.end(); it++ ) {
+            char* _thisAlias = (char*)(*it).c_str();
+            matchResult = osc_match(_pattern, _thisAlias, &pattrOffset, &addrOffset);
+            if(matchResult != 0) {
+                break;
+            }
+        }
+    }
     
+
     //cout << m.getAddress() << "<<< " << endl;
     
     if(matchResult == 0) {
@@ -77,6 +93,9 @@ void ofxOscRouterNode::setOscParent(ofxOscRouterNode* _oscParent) {
 ofxOscRouterNode* ofxOscRouterNode::getOscParent() {
     return oscParent;
 }
+
+
+
 
 // TODO: this doesn't seem very efficient ... must be a better way ...
 //--------------------------------------------------------------
@@ -132,6 +151,26 @@ void ofxOscRouterNode::setOscNodeName(string _oscNodeName) {
 //--------------------------------------------------------------
 string ofxOscRouterNode::getOscNodeName() {
     return oscNodeName;
+}
+
+//--------------------------------------------------------------
+bool ofxOscRouterNode::hasOscNodeAlias(string _oscNodeAlias) {
+    return oscNodeNameAliases.find(_oscNodeAlias) != oscNodeNameAliases.end();
+}
+
+//--------------------------------------------------------------
+void ofxOscRouterNode::addOscNodeAlias(string _oscNodeAlias) {
+    oscNodeNameAliases.insert(_oscNodeAlias);
+}
+
+//--------------------------------------------------------------
+void ofxOscRouterNode::removeOscNodeAlias(string _oscNodeAlias) {
+    oscNodeNameAliases.erase(oscNodeNameAliases.find(_oscNodeAlias));
+}
+
+//--------------------------------------------------------------
+void ofxOscRouterNode::clearOscNodeAliases() {
+    oscNodeNameAliases.clear();
 }
 
 //--------------------------------------------------------------
@@ -201,6 +240,112 @@ bool ofxOscRouterNode::getArgAsBoolean(ofxOscMessage& m, int index) {
     } else {
         return false;
     }
+}
+
+float ofxOscRouterNode::getArgAsFloatUnchecked(ofxOscMessage& m, int index) {
+    ofxOscArgType argType = m.getArgType(index);
+    if(argType == OFXOSC_TYPE_INT32) {
+        return (float)m.getArgAsInt32(index);
+    } else if(argType == OFXOSC_TYPE_FLOAT) {
+        return (float)m.getArgAsFloat(index);
+    } else {
+        ofLog(OF_LOG_ERROR, "getArgAsFloatUnchecked: invalid arg type. returning 0.0f");
+        return 0.0f;
+    }
+}
+
+int ofxOscRouterNode::getArgAsIntUnchecked(ofxOscMessage& m, int index) {
+    ofxOscArgType argType = m.getArgType(index);
+    if(argType == OFXOSC_TYPE_INT32) {
+        return (int)m.getArgAsInt32(index);
+    } else if(argType == OFXOSC_TYPE_FLOAT) {
+        return (int)m.getArgAsFloat(index);
+    } else {
+        ofLog(OF_LOG_ERROR, "getArgAsIntUnchecked: invalid arg type. returning 0.0f");
+        return 0.0f;
+    }
+}
+
+string ofxOscRouterNode::getArgAsStringUnchecked(ofxOscMessage& m, int index) {
+    ofxOscArgType argType = m.getArgType(index);
+    if(argType == OFXOSC_TYPE_INT32) {
+        return ofToString(m.getArgAsInt32(index));
+    } else if(argType == OFXOSC_TYPE_FLOAT) {
+        return ofToString(m.getArgAsFloat(index));
+    } else if(argType == OFXOSC_TYPE_STRING) {
+        return m.getArgAsString(index);
+    } else {
+        ofLog(OF_LOG_ERROR, "getArgAsStringUnchecked: invalid arg type. returning 0.0f");
+        return "NULL";
+    }
+}
+
+
+
+//--------------------------------------------------------------
+ofColor ofxOscRouterNode::getArgsAsColor(ofxOscMessage& m, int startIndex) {
+    ofColor color;
+    if(m.getNumArgs() > startIndex) {
+        vector<float> args = getArgsAsFloatArray(m,startIndex);
+        if(args.size() == 1) {
+            color.set(args[0]);
+        } else if(args.size() == 2) {
+            color.set(args[0],args[1]);
+        } else if(args.size() == 3) {
+            color.set(args[0],args[1],args[2]);
+        } else if(args.size() == 4) {
+            color.set(args[0],args[1],args[2],args[3]);
+            if(args.size() > 4) {
+                ofLog(OF_LOG_ERROR, "getArgsAsColor: more than 4 args for color, ignoring.");
+            }
+        } 
+    } else {
+        ofLog(OF_LOG_ERROR, "getArgsAsColor: no args to parse.");
+    }
+    return color;
+}
+
+//--------------------------------------------------------------
+ofPoint ofxOscRouterNode::getArgsAsPoint(ofxOscMessage& m, int startIndex) {
+    ofPoint point;
+    if(m.getNumArgs() > startIndex) {
+        vector<float> args = getArgsAsFloatArray(m,startIndex);
+        if(args.size() == 1) {
+            point.set(args[0]);
+        } else if(args.size() == 2) {
+            point.set(args[0],args[1]);
+        } else if(args.size() == 3) {
+            point.set(args[0],args[1],args[2]);
+            if(args.size() > 3) {
+                ofLog(OF_LOG_ERROR, "getArgsAsPoint: more than 3 args for point, ignoring extras.");
+            }
+        } 
+    } else {
+        ofLog(OF_LOG_ERROR, "getArgsAsPoint: no args to parse.");
+    }
+    return point;
+}
+
+
+//--------------------------------------------------------------
+vector<float> ofxOscRouterNode::getArgsAsFloatArray(ofxOscMessage& m, int index) {
+    vector<float> array;
+    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsFloatUnchecked(m,i));
+    return array;
+}
+
+//--------------------------------------------------------------
+vector<int> ofxOscRouterNode::getArgsAsIntArray(ofxOscMessage& m, int index) {
+    vector<int> array;
+    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsIntUnchecked(m,i));
+    return array;
+}
+
+//--------------------------------------------------------------
+vector<string> ofxOscRouterNode::getArgsAsStringArray(ofxOscMessage& m, int index) {
+    vector<string> array;
+    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsStringUnchecked(m,i));
+    return array;
 }
 
 //--------------------------------------------------------------

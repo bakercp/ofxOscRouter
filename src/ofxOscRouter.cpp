@@ -14,6 +14,10 @@ ofxOscRouter::~ofxOscRouter() {
 //--------------------------------------------------------------
 void ofxOscRouter::setup(string rootNodeName, int port) {
     setOscNodeName(rootNodeName);
+    
+    
+    
+    
     setPort(port);
 	ofLog(OF_LOG_NOTICE, "ofxOscRouter: Listening for osc messages on port " + ofToString(port));
 }
@@ -21,6 +25,7 @@ void ofxOscRouter::setup(string rootNodeName, int port) {
 //--------------------------------------------------------------
 void ofxOscRouter::processOscMessage(string address, ofxOscMessage& m) {
     // the manager received a message
+    cout << "the manager received a message." << endl;
 }
 
 //--------------------------------------------------------------

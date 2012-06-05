@@ -44,7 +44,13 @@ public:
     // recursively locate the root node
     ofxOscRouterNode* getOscRoot();
     
-    void setOscNodeName(string _oscNodeName);    
+    void setOscNodeName(string _oscNodeName);
+    
+    bool hasOscNodeAlias(string _oscNodeAlias);
+    void addOscNodeAlias(string _oscNodeAlias);
+    void removeOscNodeAlias(string _oscNodeAlias);
+    void clearOscNodeAliases();
+    
     string getOscNodeName();
     ofxOscRouterNode* getOscParent();
     // TODO: this doesn't seem very efficient ... must be a better way ...
@@ -61,10 +67,22 @@ public:
     
     // supplementary
     bool getArgAsBoolean(ofxOscMessage& m, int index);
+    ofColor getArgsAsColor(ofxOscMessage& m, int index);
+    ofPoint getArgsAsPoint(ofxOscMessage& m, int index);
+
+    float  getArgAsFloatUnchecked(ofxOscMessage& m, int index);
+    int    getArgAsIntUnchecked(ofxOscMessage& m, int index);
+    string getArgAsStringUnchecked(ofxOscMessage& m, int index);
+    
+    vector<float> getArgsAsFloatArray(ofxOscMessage& m, int index);
+    vector<int> getArgsAsIntArray(ofxOscMessage& m, int index);
+    vector<string> getArgsAsStringArray(ofxOscMessage& m, int index);
+    
 
 protected:
 	
     string oscNodeName;
+    set<string> oscNodeNameAliases;
     
     ofxOscRouterNode* oscParent;
     vector<ofxOscRouterNode*> oscChildren;
