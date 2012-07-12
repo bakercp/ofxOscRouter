@@ -2,7 +2,7 @@
 
 
 //--------------------------------------------------------------
-ofxOscRouter::ofxOscRouter() : ofxOscRouterNode(NULL, "/") {
+ofxOscRouter::ofxOscRouter() {
     ofAddListener(ofEvents().update,this,&ofxOscRouter::update);
 }
 
@@ -13,23 +13,19 @@ ofxOscRouter::~ofxOscRouter() {
 
 //--------------------------------------------------------------
 void ofxOscRouter::setup(string rootNodeName, int port) {
-    setOscNodeName(rootNodeName);
-    
-    
-    
-    
+    addOscNodeAlias(rootNodeName);
     setPort(port);
 	ofLog(OF_LOG_NOTICE, "ofxOscRouter: Listening for osc messages on port " + ofToString(port));
 }
 
 //--------------------------------------------------------------
-void ofxOscRouter::processOscMessage(string address, ofxOscMessage& m) {
+void ofxOscRouter::processOscMessage(const string& pattern, const ofxOscMessage& m) {
     // the manager received a message
-    cout << "the manager received a message." << endl;
+	ofLog(OF_LOG_VERBOSE, "ofxOscRouter: the router processed a message.");
 }
 
 //--------------------------------------------------------------
-void ofxOscRouter::update(ofEventArgs& eventsArts) {
+void ofxOscRouter::update(ofEventArgs& eventsArgs) {
 	// check for waiting messages
 	while(receiver.hasWaitingMessages()) {
 		ofxOscMessage m;

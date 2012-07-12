@@ -13,15 +13,31 @@ public:
 	virtual ~ofxOscRouter();
     
     void setup(string rootNodeName, int listenerPort);
-    void update(ofEventArgs& eventsArts);
+    void update(ofEventArgs& eventsArgs);
     void setPort(int port);
     
-    void processOscMessage(string address, ofxOscMessage& m);
+    void processOscMessage(const string& address, const ofxOscMessage& m);
 	
     ofxOscReceiver& getOscReciever();
 	
+    //bool plug(string nodeAddress, ofxOscRouterNode* node);
+    //bool plug(string nodeAddress, string method, ofxOscRouterNode* node, Function, function)
+    
+    // bool unplug(string nodeAddress);
+    // bool unplug(string nodeAddress);
+    
+    
+    string dumpSchema() {
+        
+        
+        
+        
+    }
+    
 protected:
-		
+
+    //map<string, ofxOscRouterNode*> plugMap;
+    
 	ofxOscReceiver	receiver;  // TODO: remove this from the router
                                // to separate the two functions
                                // for more flexibility.
