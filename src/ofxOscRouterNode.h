@@ -1,3 +1,27 @@
+/*==============================================================================
+ 
+ Copyright (c) 2010, 2011, 2012 Christopher Baker <http://christopherbaker.net>
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ 
+ ==============================================================================*/
+
 #pragma once
 
 #include <map>
@@ -8,6 +32,28 @@
 #include "ofxOscRouterNode.h"
 #include "Poco/RegularExpression.h"
 #include "Poco/String.h"
+
+
+
+// tr1 stuff, for function callbacks
+#if (_MSC_VER)
+#include <functional>
+#include <unordered_map>
+    using std::unordered_map;
+    using std::function;
+    using std::bind;
+    using std::ref;
+#else
+#include <tr1/functional>
+#include <tr1/unordered_map>
+    using std::tr1::unordered_map;
+    using std::tr1::function;
+    using std::tr1::bind;
+    using std::tr1::ref;
+#endif
+
+typedef function<void ()> NoArgPlugFunc;
+typedef function<void (const ofxOscMessage& m)> OscMessagePlugFunc;
 
 #include "ofxSimpleSet.h"
 
@@ -21,8 +67,6 @@ using Poco::toUpper;
 using Poco::toLower;
 using Poco::icompare;
 using Poco::replace;
-
-
 
 class ofxOscRouterNode {
 
@@ -81,6 +125,13 @@ public:
     bool hasOscMethod(string _method) const;
     bool addOscMethod(string _method);
     bool removeOscMethod(string _method);
+
+    bool hasOscPlugMethod(string _method);
+    bool addOscPlugMethod(string _method, NoArgPlugFunc func);
+    bool addOscPlugMethod(string _method, OscMessagePlugFunc func);
+    bool removeOscPlugMethod(string _method);
+    bool executeOscPlugMethod(string _method, const ofxOscMessage& m);
+    
     
     // TODO: add OSC Methods that link directly to a method, rather than go 
     // through the processOscMessage callback.
@@ -137,6 +188,12 @@ private:
     ofxSimpleSet<string> oscNodeNameAliases;
 
     ofxSimpleSet<string> oscMethods;
+    
+	unordered_map<string,NoArgPlugFunc>            noArgPlugFuncMap;
+    unordered_map<string,NoArgPlugFunc>::iterator  noArgPlugFuncMapIter;
+
+    unordered_map<string,OscMessagePlugFunc>            oscMessagePlugFuncMap;
+    unordered_map<string,OscMessagePlugFunc>::iterator  oscMessagePlugFuncMapIter;
 
     ofxSimpleSet<ofxOscRouterNode*> oscParents;
     ofxSimpleSet<ofxOscRouterNode*> oscChildren;

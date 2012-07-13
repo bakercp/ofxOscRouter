@@ -22,49 +22,21 @@
  
  ==============================================================================*/
 
+
 #pragma once
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxOscRouterNode.h"
 
-class ofxOscRouter : public ofxOscRouterNode {
-	
+class ofxOscRouterEvent : public ofEventArgs {
 public:
-	
-	ofxOscRouter();
-	ofxOscRouter(string rootNodeName, int listenerPort);
-	virtual ~ofxOscRouter();
     
-    void setup(string rootNodeName, int listenerPort);
-    void update(ofEventArgs& eventsArgs);
-    void setPort(int port);
-    
-    void processOscMessage(const string& address, const ofxOscMessage& m);
-	
-    ofxOscReceiver& getOscReciever();
-	
-    //bool plug(string nodeAddress, ofxOscRouterNode* node);
-    //bool plug(string nodeAddress, string method, ofxOscRouterNode* node, Function, function)
-    
-    // bool unplug(string nodeAddress);
-    // bool unplug(string nodeAddress);
-    
-    
-    string dumpSchema() {
-        
-        
-        
-        
-    }
-    
-protected:
+    ofxOscRouterEvent() {}
 
-    //map<string, ofxOscRouterNode*> plugMap;
+    string address;
+    ofxOscMessage message;
     
-	ofxOscReceiver	receiver;  // TODO: remove this from the router
-                               // to separate the two functions
-                               // for more flexibility.
-	
+    
+    static ofEvent<ofxOscRouterEvent> events;
+    
 };
-
