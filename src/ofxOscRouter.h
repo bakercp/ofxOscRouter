@@ -37,30 +37,26 @@ public:
 	virtual ~ofxOscRouter();
     
     void setup(string rootNodeName, int listenerPort);
-    void update(ofEventArgs& eventsArgs);
+    void update();
     void setPort(int port);
     
-    void processOscMessage(const string& address, const ofxOscMessage& m);
+    void processOscCommand(const string& command, const ofxOscMessage& m);
 	
     ofxOscReceiver& getOscReciever();
 	
-    //bool plug(string nodeAddress, ofxOscRouterNode* node);
-    //bool plug(string nodeAddress, string method, ofxOscRouterNode* node, Function, function)
+    //bool plug(string nodeAddress, ofxOscRouterBaseNode* node);
+    //bool plug(string nodeAddress, string method, ofxOscRouterBaseNode* node, Function, function)
     
     // bool unplug(string nodeAddress);
     // bool unplug(string nodeAddress);
     
     
     string dumpSchema() {
-        
-        
-        
-        
     }
     
 protected:
 
-    //map<string, ofxOscRouterNode*> plugMap;
+    //map<string, ofxOscRouterBaseNode*> plugMap;
     
 	ofxOscReceiver	receiver;  // TODO: remove this from the router
                                // to separate the two functions

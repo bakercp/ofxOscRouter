@@ -37,7 +37,7 @@ int osc_match(const char *pattern, const char *address, int *pattern_offset, int
 	while(*address != '\0' && *pattern != '\0'){
 		if(*pattern == '*'){
 			if(!osc_match_star(pattern, address)){
-				return 0;
+				return OSC_MATCH_NONE;
 			}
 			while(*pattern != '/' && *pattern != '\0'){
 				pattern++;
@@ -47,7 +47,7 @@ int osc_match(const char *pattern, const char *address, int *pattern_offset, int
 			}
 		}else{
 			if(!osc_match_single_char(pattern, address)){
-				return 0;
+				return OSC_MATCH_NONE;
 			}
 			if(*pattern == '[' || *pattern == '{'){
 				while(*pattern != ']' && *pattern != '}'){
@@ -264,7 +264,7 @@ int osc_match_bracket(const char *pattern, const char *address){
 }
 
 int osc_match_curly_brace(const char *pattern, const char *address){
-	int matched = 0;
+	int matched = OSC_MATCH_NONE;
 	pattern++;
 	while(*pattern != '}' && *pattern != '\0' && *pattern != '/'){
 		if(*pattern == *address){
@@ -285,7 +285,7 @@ int osc_match_curly_brace(const char *pattern, const char *address){
 		pattern++;
 		address++;
 	}else{
-		return 0;
+		return OSC_MATCH_NONE;
 	}
     
 	return 1;

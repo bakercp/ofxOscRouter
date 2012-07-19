@@ -25,14 +25,15 @@
 #include "ofxOscRouter.h"
 
 //--------------------------------------------------------------
-ofxOscRouter::ofxOscRouter() {
-    ofAddListener(ofEvents().update,this,&ofxOscRouter::update);
+ofxOscRouter::ofxOscRouter() {}
+
+//--------------------------------------------------------------
+ofxOscRouter::ofxOscRouter(string rootNodeName, int listenerPort) {
+    setup(rootNodeName, listenerPort);
 }
 
 //--------------------------------------------------------------
-ofxOscRouter::~ofxOscRouter() { 
-    ofRemoveListener(ofEvents().update,this,&ofxOscRouter::update);
-}
+ofxOscRouter::~ofxOscRouter() {}
 
 //--------------------------------------------------------------
 void ofxOscRouter::setup(string rootNodeName, int port) {
@@ -42,13 +43,13 @@ void ofxOscRouter::setup(string rootNodeName, int port) {
 }
 
 //--------------------------------------------------------------
-void ofxOscRouter::processOscMessage(const string& pattern, const ofxOscMessage& m) {
+void ofxOscRouter::processOscCommand(const string& command, const ofxOscMessage& m) {
     // the manager received a message
 	ofLog(OF_LOG_VERBOSE, "ofxOscRouter: the router processed a message.");
 }
 
 //--------------------------------------------------------------
-void ofxOscRouter::update(ofEventArgs& eventsArgs) {
+void ofxOscRouter::update() {
 	// check for waiting messages
 	while(receiver.hasWaitingMessages()) {
 		ofxOscMessage m;
@@ -56,6 +57,7 @@ void ofxOscRouter::update(ofEventArgs& eventsArgs) {
         routeOscMessage(m.getAddress(), m); // route the message
 	}
 }
+
 
 //--------------------------------------------------------------
 void ofxOscRouter::setPort(int port) {
