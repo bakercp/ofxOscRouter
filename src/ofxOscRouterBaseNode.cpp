@@ -50,7 +50,7 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
     if(!isNodeActive()) return; // bail if this node is active
     
     
-    cout << "routing=>" << pattern << " / " << m.getAddress() << " and have " << oscChildren.size() << " oscChildren" << endl;
+    //cout << "routing=>" << pattern << " / " << m.getAddress() << " and have " << oscChildren.size() << " oscChildren" << endl;
     
 //// For debugging.
 
@@ -79,7 +79,7 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
     // check our aliases
     set<string>& aliasesRef = getOscNodeAliasesRef();
     
-    cout << "found " << aliasesRef.size() << " aliases " << endl;
+    //cout << "found " << aliasesRef.size() << " aliases " << endl;
     
     if(!aliasesRef.empty()) {//matchResult == 0) {
         // this reversal is to prevent overlap of aliases.  
@@ -90,17 +90,17 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
 //        vector<string>::iterator aliasIter;
         std::set<string>::reverse_iterator aliasIter;
         
-        int xxx = 0;
+        //int xxx = 0;
         
         for( aliasIter = aliasesRef.rbegin(); aliasIter != aliasesRef.rend(); ++aliasIter) {
 
             
-            cout << "\t\t\t\t\t\t #aliases=" << aliasesRef.size() <<  " index = " << xxx << endl;
-            xxx++;
+            //cout << "\t\t\t\t\t\t #aliases=" << aliasesRef.size() <<  " index = " << xxx << endl;
+            //xxx++;
         
 //        for(aliasIter = aliasesRef.begin(); aliasIter != aliasesRef.end(); aliasIter++) {
             string alias = (*aliasIter);
-            ofLog(OF_LOG_NOTICE, tabs + "/"+ alias + " match? " + pattern);
+            ofLog(OF_LOG_VERBOSE, tabs + "/"+ alias + " match? " + pattern);
 
             //string alias = aliases[i];
             pattrOffset = 0;
@@ -124,7 +124,7 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
         return;
     } else {
         
-        cout << "evaluating results == pattern = " << pattern << endl;
+        //cout << "evaluating results == pattern = " << pattern << endl;
         
         if(matchResult == OSC_MATCH_ADDRESS_AND_PATTERN_COMPLETE) {
             // an exact match for this node and there is no method to try.
@@ -150,14 +150,14 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
                 // if it is not a command, try to pass it on up the chain
                 //vector<ofxOscRouterBaseNode*> children = oscChildren.toArray();
                 
-                cout << "Passing it up the chain and has " << oscChildren.size() << " oscChildren" << endl;
+                //cout << "Passing it up the chain and has " << oscChildren.size() << " oscChildren" << endl;
                 
                 set<ofxOscRouterBaseNode*>::iterator childIter = oscChildren.begin();
-                for (childIter = oscChildren.begin(); childIter != oscChildren.end(); childIter++) {
-                    cout << " : " <<  (*childIter)->getFirstOscNodeAlias() << endl;
-                }
+//                for (childIter = oscChildren.begin(); childIter != oscChildren.end(); childIter++) {
+//                    cout << " : " <<  (*childIter)->getFirstOscNodeAlias() << endl;
+//                }
 
-                cout << "----" << endl;
+                //cout << "----" << endl;
                 
                 for (childIter = oscChildren.begin(); childIter != oscChildren.end(); childIter++) {
                     
@@ -170,7 +170,7 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
                     }
                 }
                 
-                cout << "Done passing it up the chain." << endl;
+                //cout << "Done passing it up the chain." << endl;
                 
                 
             }
