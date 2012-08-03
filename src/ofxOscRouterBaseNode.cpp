@@ -455,7 +455,7 @@ bool ofxOscRouterBaseNode::isMatch(const string& s0, const string& s1) {
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::getArgAsBoolean(const ofxOscMessage& m, int index) {
-    if(m.getNumArgs() < index) {
+    if(index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
         if(argType == OFXOSC_TYPE_INT32) {
             return m.getArgAsInt32(index) != 0;
@@ -515,7 +515,7 @@ string ofxOscRouterBaseNode::getArgAsStringUnchecked(const ofxOscMessage& m, int
 //--------------------------------------------------------------
 ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIndex) {
     ofColor color;
-    if(m.getNumArgs() > startIndex) {
+    if(startIndex < m.getNumArgs()) {
         vector<float> args = getArgsAsFloatArray(m,startIndex);
         if(args.size() == 1) {
             color.set(args[0]);
@@ -538,7 +538,7 @@ ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIn
 //--------------------------------------------------------------
 ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int startIndex) {
     ofPoint point;
-    if(m.getNumArgs() > startIndex) {
+    if(startIndex < m.getNumArgs()) {
         vector<float> args = getArgsAsFloatArray(m,startIndex);
         if(args.size() == 1) {
             point.set(args[0]);
