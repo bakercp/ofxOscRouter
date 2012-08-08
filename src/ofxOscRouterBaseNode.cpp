@@ -181,14 +181,48 @@ void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
 
 }
 
-////--------------------------------------------------------------
-//ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() const {
-//    if(hasParents()) {
-//        return *oscParents.begin();
-//    } else {
-//        return NULL;
-//    }
-//}
+//--------------------------------------------------------------
+bool ofxOscRouterBaseNode::hasParents() const {
+    return !oscParents.empty();
+}
+
+//--------------------------------------------------------------
+ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() {
+    if(hasParents()) {
+        return *oscParents.begin();
+    } else {
+        return NULL;
+    }
+}
+
+//--------------------------------------------------------------
+const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() const {
+    if(hasParents()) {
+        return *oscParents.begin();
+    } else {
+        return NULL;
+    }
+}
+
+
+//--------------------------------------------------------------
+ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() {
+    if(hasChildren()) {
+        return *oscChildren.rbegin();
+    } else {
+        return NULL;
+    }
+}
+
+//--------------------------------------------------------------
+const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() const {
+    if(hasChildren()) {
+        return *oscChildren.rbegin();
+    } else {
+        return NULL;
+    }
+}
+
 
 ////--------------------------------------------------------------
 //vector<ofxOscRouterBaseNode*> ofxOscRouterBaseNode::getOscParents() const {
@@ -242,16 +276,33 @@ ofxOscRouterBaseNode* ofxOscRouterBaseNode::getOscRoot() {
 }
 
 //--------------------------------------------------------------
-string ofxOscRouterBaseNode::getFirstOscNodeAlias() {
-    set<string>& aliasesRef = getOscNodeAliasesRef();
+string ofxOscRouterBaseNode::getFirstOscNodeAlias() const {
+    const set<string>& aliasesRef = getOscNodeAliasesRef();
     if(!aliasesRef.empty()) {
         return *aliasesRef.begin();
     } else {
-        ofLog(OF_LOG_ERROR,"ofxOscRouterBaseNode::getFirstOscNodeAlias() No ALiases!");
+        ofLog(OF_LOG_ERROR,"ofxOscRouterBaseNode::getFirstOscNodeAlias() No Aliases!");
         return "NO ALIASES!";
     }
 }
 
+//--------------------------------------------------------------
+string ofxOscRouterBaseNode::getLastOscNodeAlias() const {
+    const set<string>& aliasesRef = getOscNodeAliasesRef();
+    if(!aliasesRef.empty()) {
+        return *aliasesRef.rbegin();
+    } else {
+        ofLog(OF_LOG_ERROR,"ofxOscRouterBaseNode::getLastOscNodeAlias() No Aliases!");
+        return "NO ALIASES!";
+    }
+}
+
+
+//--------------------------------------------------------------
+bool ofxOscRouterBaseNode::hasOscNodeAlias(const string& alias) const {
+    const set<string>& aliasesRef = getOscNodeAliasesRef();
+    return aliasesRef.find(alias) != aliasesRef.end();
+}
 
 
 // currently broken
@@ -273,6 +324,60 @@ bool ofxOscRouterBaseNode::hasChildren() const {
     return !oscChildren.empty();
 }
 
+bool ofxOscRouterBaseNode::hasChildWithAlias(const string& name) const {
+    set<ofxOscRouterBaseNode*>::const_iterator constNodeIter = oscChildren.begin();
+    for(;constNodeIter != oscChildren.end();
+         constNodeIter++) {
+        if((*constNodeIter)->hasOscNodeAlias(name)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//--------------------------------------------------------------
+bool ofxOscRouterBaseNode::hasChildWithAlias(const set<string>& theOtherAliases) const {
+    string clashName = "";
+    return hasChildWithAlias(theOtherAliases, clashName);
+}
+
+//--------------------------------------------------------------
+bool ofxOscRouterBaseNode::hasChildWithAlias(const set<string>& theOtherAliases, string& clashName) const {
+    // seems like this could be done with set_intersection ...
+    set<ofxOscRouterBaseNode*>::iterator it;
+    set<string>::iterator theOtherIterator;
+
+   // cout << "I have -> " << oscChildren.size() << " children and need to check ";
+   // cout <<  theOtherAliases.size() << " incoming aliases." << endl;
+
+    if(oscChildren.empty()) {
+        return false;
+    }
+
+    if(theOtherAliases.empty()) {
+        return false;
+    }
+
+    for(it = oscChildren.begin();
+        it != oscChildren.end();
+        it++) {
+        
+        ofxOscRouterBaseNode* theChild = (*it);
+        
+        for(theOtherIterator = theOtherAliases.begin();
+            theOtherIterator != theOtherAliases.end();
+            theOtherIterator++) {
+            
+            if(theChild->hasOscNodeAlias(*theOtherIterator)) {
+                clashName = *theOtherIterator; // return it to see what it was.
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 //--------------------------------------------------------------
 ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() {
     if(hasChildren()) {
@@ -282,10 +387,24 @@ ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() {
     }
 }
 
-////--------------------------------------------------------------
-//vector<ofxOscRouterBaseNode*> ofxOscRouterBaseNode::getOscChildren() const {
-//    return oscChildren.toArray();
-//}
+//--------------------------------------------------------------
+const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() const {
+    if(hasChildren()) {
+        return *oscChildren.begin();
+    } else {
+        return NULL;
+    }
+}
+
+//--------------------------------------------------------------
+set<ofxOscRouterBaseNode*>& ofxOscRouterBaseNode::getOscChildrenRef() {
+    return oscChildren;
+}
+
+//--------------------------------------------------------------
+const set<ofxOscRouterBaseNode*>& ofxOscRouterBaseNode::getOscChildrenRef() const {
+    return oscChildren;
+}
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscChild(ofxOscRouterBaseNode* oscChild) const {
@@ -294,11 +413,40 @@ bool ofxOscRouterBaseNode::hasOscChild(ofxOscRouterBaseNode* oscChild) const {
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNode* oscChild) {
+    if(oscChild == NULL) {
+        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to add OSC Child.  Child was NULL.");
+        return false;
+    }
+
+    const set<string>& proposedChildAliases = oscChild->getOscNodeAliasesRef();
+    
+    string clashName = "";
+    if(hasChildWithAlias(proposedChildAliases,clashName)) {
+        
+        string thisClash = getFirstOscPath() + clashName;
+        string thatClash = ".../" + clashName;
+        ofLogError() << "ofxOscRouterBaseNode: Failed to add OSC Child.  Name clash with existing node child or node alias.";
+        ofLogError() << setw(4) << "Existing Node: " << thisClash;
+        
+        set<string>::const_iterator iter;
+        
+        ofLogError() << setw(4) << "Attempted Node: " << thatClash;
+
+        for(iter = proposedChildAliases.begin();
+            iter != proposedChildAliases.end();
+            iter++) {
+            ofLogError() << setw(4) << "Additional Node Aliase: " << *iter;
+        }
+        
+        
+        return false;
+    }    
+    
     if(oscChildren.insert(oscChild).second) {
         oscChild->addOscParent(this);
         return true;
     } else {
-        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to add OSC Child.  Child was NULL.");
+        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to add OSC Child.  Already had the same child.");
         return false;
     }
 }
@@ -316,10 +464,15 @@ bool ofxOscRouterBaseNode::removeOscChild(ofxOscRouterBaseNode* oscChild) {
 
 }
 
-////--------------------------------------------------------------
-//vector<string> ofxOscRouterBaseNode::getOscMethods() const {
-//    return oscMethods.toArray();
-//}
+//--------------------------------------------------------------
+set<string>& ofxOscRouterBaseNode::getOscMethodsRef() {
+    return oscMethods;
+}
+
+//--------------------------------------------------------------
+const set<string>& ofxOscRouterBaseNode::getOscMethodsRef() const {
+    return oscMethods;
+}
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscMethod(const string& _method) const {
@@ -351,6 +504,16 @@ bool ofxOscRouterBaseNode::isNodeActive() const {
 //--------------------------------------------------------------
 void ofxOscRouterBaseNode::setNodeActive(bool _bNodeEnabled) {
     bNodeActive = _bNodeEnabled;
+}
+
+//--------------------------------------------------------------
+string ofxOscRouterBaseNode::getFirstOscPath() const {
+    return (hasParents() ? getFirstOscParent()->getFirstOscPath() : "/" + getFirstOscNodeAlias() + "/");
+}
+
+//--------------------------------------------------------------
+string ofxOscRouterBaseNode::getLastOscPath() const {
+    return (hasParents() ? getLastOscParent()->getLastOscPath() : "/" + getLastOscNodeAlias() + "/");
 }
 
 //--------------------------------------------------------------

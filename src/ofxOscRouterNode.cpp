@@ -25,6 +25,11 @@ set<string>& ofxOscRouterNode::getOscNodeAliasesRef() {
 }
 
 //--------------------------------------------------------------
+const set<string>& ofxOscRouterNode::getOscNodeAliasesRef() const {
+    return oscNodeNameAliases;
+}
+
+//--------------------------------------------------------------
 bool ofxOscRouterNode::hasOscAliases() const {
     return !oscNodeNameAliases.empty();
 }
@@ -45,9 +50,16 @@ bool ofxOscRouterNode::hasOscNodeAlias(const string& _oscNodeAlias) const {
 
 //--------------------------------------------------------------
 bool ofxOscRouterNode::addOscNodeAlias(const string& _oscNodeAlias) {
-    bool success = oscNodeNameAliases.insert(_oscNodeAlias).second;
-    if(!success) ofLogWarning() << "ofxOscRouterNode::addOscNodeAlias : oscNodeAlias already exists : " << _oscNodeAlias;
-    return success;
+    if(hasChildWithAlias(_oscNodeAlias)) {
+        ofLogWarning() << "ofxOscRouterNode::addOscNodeAlias : oscChild Node already exists : " << _oscNodeAlias;
+        return false;
+    }
+    if(oscNodeNameAliases.insert(_oscNodeAlias).second) {
+        return true;
+    } else {
+        ofLogWarning() << "ofxOscRouterNode::addOscNodeAlias : oscNodeAlias already exists : " << _oscNodeAlias;
+        return false;
+    }
 }
 
 //--------------------------------------------------------------

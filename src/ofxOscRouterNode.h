@@ -19,6 +19,7 @@ public:
     virtual void processOscCommand(const string& command, const ofxOscMessage& m) = 0;
 
     set<string>& getOscNodeAliasesRef();
+    const set<string>& getOscNodeAliasesRef() const;
 
     bool hasOscAliases() const;
     

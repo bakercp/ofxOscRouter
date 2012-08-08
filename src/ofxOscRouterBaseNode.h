@@ -90,11 +90,18 @@ public:
     ofxOscRouterBaseNode* getOscRoot();
 
     virtual set<string>& getOscNodeAliasesRef() = 0;
-    virtual string getFirstOscNodeAlias();
+    virtual const set<string>& getOscNodeAliasesRef() const = 0;
+
+    virtual string getFirstOscNodeAlias() const;
+    virtual string getLastOscNodeAlias() const;
+    bool hasOscNodeAlias(const string& alias) const;
     
     // parent directory
     bool hasParents() const;
-    ofxOscRouterBaseNode* getFirstOscParent() const;
+    const ofxOscRouterBaseNode* getFirstOscParent() const;
+    ofxOscRouterBaseNode* getFirstOscParent();
+    const ofxOscRouterBaseNode* getLastOscParent() const;
+    ofxOscRouterBaseNode* getLastOscParent();
 
     bool hasOscParent(ofxOscRouterBaseNode* _oscParent) const;
     bool addOscParent(ofxOscRouterBaseNode* _oscParent);
@@ -102,9 +109,15 @@ public:
 
     // child directory
     bool hasChildren() const;
+    bool hasChildWithAlias(const string& alias) const;
+    bool hasChildWithAlias(const set<string>& aliases) const;
+    bool hasChildWithAlias(const set<string>& aliases, string& clashName) const;
+
     ofxOscRouterBaseNode* getFirstOscChild();
+    const ofxOscRouterBaseNode* getFirstOscChild() const;
     
     set<ofxOscRouterBaseNode*>& getOscChildrenRef();
+    const set<ofxOscRouterBaseNode*>& getOscChildrenRef() const;
     
     bool hasOscChild(ofxOscRouterBaseNode* oscChild) const;
     bool addOscChild(ofxOscRouterBaseNode* oscChild);
@@ -112,12 +125,19 @@ public:
     
     // method directory
     set<string>& getOscMethodsRef();
+    const set<string>& getOscMethodsRef() const;
+
     bool hasOscMethod(const string& _method) const;
     bool addOscMethod(const string& _method);
     bool removeOscMethod(const string& _method);
 
     bool isNodeActive() const;
     void setNodeActive(bool _bNodeEnabled);
+    
+    
+    string getFirstOscPath() const;
+    string getLastOscPath() const;
+    
     
     
 //    bool hasOscPlugMethod(string _method);
@@ -194,6 +214,7 @@ private:
     unordered_map<string,OscMessagePlugFunc>            oscMessagePlugFuncMap;
     unordered_map<string,OscMessagePlugFunc>::iterator  oscMessagePlugFuncMapIter;
 
+    set<ofxOscRouterBaseNode*>::iterator nodeIter;
     set<ofxOscRouterBaseNode*> oscParents;
     set<ofxOscRouterBaseNode*> oscChildren;
 
