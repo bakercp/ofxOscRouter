@@ -328,7 +328,9 @@ bool ofxOscRouterBaseNode::hasOscMethod(const string& _method) const {
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::addOscMethod(const string& _method) {
-    return oscMethods.insert(_method).second;
+    bool success = oscMethods.insert(_method).second;
+    if(!success) ofLogWarning() << "ofxOscRouterBaseNode::addOscMethod : method=" <<  _method << " already exists.";
+    return success;
 }
 
 //--------------------------------------------------------------
@@ -590,7 +592,7 @@ bool ofxOscRouterBaseNode::validateOscSignature(const string& signature, const o
     bool match = re.match(mSignature);
     
     if(!match) {
-        ofLog(OF_LOG_ERROR, "Signature: " + signature + " did not match mSignature= " + mSignature);
+        ofLog(OF_LOG_ERROR, m.getAddress() + ": Signature: " + signature + " did not match mSignature= " + mSignature);
     }
     
     return match;

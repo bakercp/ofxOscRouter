@@ -45,7 +45,9 @@ bool ofxOscRouterNode::hasOscNodeAlias(const string& _oscNodeAlias) const {
 
 //--------------------------------------------------------------
 bool ofxOscRouterNode::addOscNodeAlias(const string& _oscNodeAlias) {
-    return oscNodeNameAliases.insert(_oscNodeAlias).second;
+    bool success = oscNodeNameAliases.insert(_oscNodeAlias).second;
+    if(!success) ofLogWarning() << "ofxOscRouterNode::addOscNodeAlias : oscNodeAlias already exists : " << _oscNodeAlias;
+    return success;
 }
 
 //--------------------------------------------------------------
