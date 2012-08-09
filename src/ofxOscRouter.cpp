@@ -28,7 +28,7 @@
 ofxOscRouter::ofxOscRouter() {}
 
 //--------------------------------------------------------------
-ofxOscRouter::ofxOscRouter(string rootNodeName, int listenerPort) {
+ofxOscRouter::ofxOscRouter(const string& rootNodeName, int listenerPort) {
     setup(rootNodeName, listenerPort);
 }
 
@@ -36,7 +36,7 @@ ofxOscRouter::ofxOscRouter(string rootNodeName, int listenerPort) {
 ofxOscRouter::~ofxOscRouter() {}
 
 //--------------------------------------------------------------
-void ofxOscRouter::setup(string rootNodeName, int port) {
+void ofxOscRouter::setup(const string& rootNodeName, int port) {
     addOscNodeAlias(rootNodeName);
     setPort(port);
 	ofLog(OF_LOG_NOTICE, "ofxOscRouter: Listening for osc messages on port " + ofToString(port));

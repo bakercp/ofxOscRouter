@@ -45,7 +45,7 @@ ofxOscRouterBaseNode::ofxOscRouterBaseNode() {
 ofxOscRouterBaseNode::~ofxOscRouterBaseNode() {}
 
 //--------------------------------------------------------------
-void ofxOscRouterBaseNode::routeOscMessage(string pattern, ofxOscMessage& m) {
+void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage& m) {
     
     if(!isNodeActive()) return; // bail if this node is active
     

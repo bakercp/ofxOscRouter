@@ -84,7 +84,7 @@ public:
     // the address here is the remaining bit of the address, as it is processed and pruned
     virtual void processOscCommand(const string& command, const ofxOscMessage& m) = 0;
 
-    void routeOscMessage(string pattern, ofxOscMessage& m);
+    void routeOscMessage(const string& pattern, ofxOscMessage& m);
     
     // recursively locate the root node
     ofxOscRouterBaseNode* getOscRoot();

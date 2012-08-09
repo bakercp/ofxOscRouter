@@ -33,10 +33,10 @@ class ofxOscRouter : public ofxOscRouterNode {
 public:
 	
 	ofxOscRouter();
-	ofxOscRouter(string rootNodeName, int listenerPort);
+	ofxOscRouter(const string& rootNodeName, int listenerPort);
 	virtual ~ofxOscRouter();
     
-    void setup(string rootNodeName, int listenerPort);
+    void setup(const string& rootNodeName, int listenerPort);
     void update();
     void setPort(int port);
     
