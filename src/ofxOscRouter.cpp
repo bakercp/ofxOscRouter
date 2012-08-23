@@ -39,7 +39,7 @@ ofxOscRouter::~ofxOscRouter() {}
 void ofxOscRouter::setup(const string& rootNodeName, int port) {
     addOscNodeAlias(rootNodeName);
     setPort(port);
-	ofLog(OF_LOG_NOTICE, "ofxOscRouter: Listening for osc messages on port " + ofToString(port));
+	ofLogNotice("ofxOscRouter") << "Listening for osc messages on port " << port;
 }
 
 //--------------------------------------------------------------
