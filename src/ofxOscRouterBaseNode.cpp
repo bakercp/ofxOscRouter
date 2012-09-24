@@ -783,8 +783,6 @@ vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, 
     
     endIndex = MAX(endIndex, index);
     
-    cout << "index=" << index << " endIndex = " << endIndex << endl;
-    
     for(int i = index; i < endIndex; i++) {
         array.push_back(getArgAsFloatUnchecked(m, i));
     }
