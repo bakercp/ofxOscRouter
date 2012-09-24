@@ -187,14 +187,23 @@ public:
     static bool isMatch(const string& s0, const string& s1);
     static bool validateOscSignature(const string&, const ofxOscMessage& m); 
 
-    static bool    getArgAsBoolean(const ofxOscMessage& m, int index);
+    static ofColor getArgsAsColor(const ofxOscMessage& m, int index, int endIndex);
+    static ofPoint getArgsAsPoint(const ofxOscMessage& m, int index, int endIndex);
+
     static ofColor getArgsAsColor(const ofxOscMessage& m, int index);
     static ofPoint getArgsAsPoint(const ofxOscMessage& m, int index);
     
+    static bool   getArgAsBoolUnchecked(const ofxOscMessage& m, int index);
     static float  getArgAsFloatUnchecked(const ofxOscMessage& m, int index);
     static int    getArgAsIntUnchecked(const ofxOscMessage& m, int index);
     static string getArgAsStringUnchecked(const ofxOscMessage& m, int index);
     
+    static vector<bool>   getArgsAsBoolArray(const ofxOscMessage& m, int index, int endIndex);
+    static vector<float>  getArgsAsFloatArray(const ofxOscMessage& m, int index, int endIndex);
+    static vector<int>    getArgsAsIntArray(const ofxOscMessage& m, int index, int endIndex);
+    static vector<string> getArgsAsStringArray(const ofxOscMessage& m, int index, int endIndex);
+
+    static vector<bool>   getArgsAsBoolArray(const ofxOscMessage& m, int index);
     static vector<float>  getArgsAsFloatArray(const ofxOscMessage& m, int index);
     static vector<int>    getArgsAsIntArray(const ofxOscMessage& m, int index);
     static vector<string> getArgsAsStringArray(const ofxOscMessage& m, int index);

@@ -281,7 +281,7 @@ string ofxOscRouterBaseNode::getFirstOscNodeAlias() const {
     if(!aliasesRef.empty()) {
         return *aliasesRef.begin();
     } else {
-        ofLog(OF_LOG_ERROR,"ofxOscRouterBaseNode::getFirstOscNodeAlias() No Aliases!");
+        ofLogError("ofxOscRouterBaseNode") << "getFirstOscNodeAlias(): No Aliases!";
         return "NO ALIASES!";
     }
 }
@@ -292,7 +292,7 @@ string ofxOscRouterBaseNode::getLastOscNodeAlias() const {
     if(!aliasesRef.empty()) {
         return *aliasesRef.rbegin();
     } else {
-        ofLog(OF_LOG_ERROR,"ofxOscRouterBaseNode::getLastOscNodeAlias() No Aliases!");
+        ofLogError("ofxOscRouterBaseNode") << "getLastOscNodeAlias() No Aliases!";
         return "NO ALIASES!";
     }
 }
@@ -414,7 +414,7 @@ bool ofxOscRouterBaseNode::hasOscChild(ofxOscRouterBaseNode* oscChild) const {
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNode* oscChild) {
     if(oscChild == NULL) {
-        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to add OSC Child.  Child was NULL.");
+        ofLogError("ofxOscRouterBaseNode") << "addOscChild: Failed to add OSC Child.  Child was NULL.";
         return false;
     }
 
@@ -425,8 +425,8 @@ bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNod
         
         string thisClash = getFirstOscPath() + clashName;
         string thatClash = ".../" + clashName;
-        ofLogError() << "ofxOscRouterBaseNode: Failed to add OSC Child.  Name clash with existing node child or node alias.";
-        ofLogError() << setw(4) << "Existing Node: " << thisClash;
+        ofLogError("ofxOscRouterBaseNode") << "addOscChild: Failed to add OSC Child.  Name clash with existing node child or node alias.";
+        ofLogError("ofxOscRouterBaseNode") << setw(4) << "Existing Node: " << thisClash;
         
         set<string>::const_iterator iter;
         
@@ -435,7 +435,7 @@ bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNod
         for(iter = proposedChildAliases.begin();
             iter != proposedChildAliases.end();
             iter++) {
-            ofLogError() << setw(4) << "Additional Node Aliase: " << *iter;
+            ofLogError("ofxOscRouterBaseNode") << setw(4) << "Additional Node Aliase: " << *iter;
         }
         
         
@@ -446,7 +446,7 @@ bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNod
         oscChild->addOscParent(this);
         return true;
     } else {
-        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to add OSC Child.  Already had the same child.");
+        ofLogError("ofxOscRouterBaseNode") << "addOscChild: Failed to add OSC Child.  Already had the same child.";
         return false;
     }
 }
@@ -458,7 +458,7 @@ bool ofxOscRouterBaseNode::removeOscChild(ofxOscRouterBaseNode* oscChild) {
         oscChildren.erase(oscChild);
         return true;
     } else {
-        ofLog(OF_LOG_ERROR, "ofxOscRouterBaseNode: Failed to remove OSC Child.  Child was NULL.");
+        ofLogError("ofxOscRouterBaseNode") << "removeOscChild: Failed to remove OSC Child.  Child was NULL.";
         return false;
     }
 
@@ -482,7 +482,7 @@ bool ofxOscRouterBaseNode::hasOscMethod(const string& _method) const {
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::addOscMethod(const string& _method) {
     bool success = oscMethods.insert(_method).second;
-    if(!success) ofLogWarning() << "ofxOscRouterBaseNode::addOscMethod : method=" <<  _method << " already exists.";
+    if(!success) ofLogWarning("ofxOscRouterBaseNode") << "addOscMethod : method=" <<  _method << " already exists.";
     return success;
 }
 
@@ -619,143 +619,247 @@ bool ofxOscRouterBaseNode::isMatch(const string& s0, const string& s1) {
 }
 
 //--------------------------------------------------------------
-bool ofxOscRouterBaseNode::getArgAsBoolean(const ofxOscMessage& m, int index) {
-    if(index < m.getNumArgs()) {
+bool ofxOscRouterBaseNode::getArgAsBoolUnchecked(const ofxOscMessage& m, int index) {
+    if(index >= 0 && index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
         if(argType == OFXOSC_TYPE_INT32) {
-            return m.getArgAsInt32(index) != 0;
+            return m.getArgAsInt32(index) > 0;
         } else if(argType == OFXOSC_TYPE_FLOAT) {
-            return m.getArgAsFloat(index) != 0.0f;
+            return m.getArgAsFloat(index) > 0.0f;
         } else if(argType == OFXOSC_TYPE_STRING) {
-            return isMatch(m.getArgAsString(index),"true");
+            string str = m.getArgAsString(index);
+            return isMatch(str,"true") ||
+                   isMatch(str,"t")    ||
+                   isMatch(str,"yes")  ||
+                   isMatch(str,"y");
         } else {
+            ofLogError("ofxOscRouterBaseNode") << "getArgAsBoolean: invalid arg type. returning false";
             return false;
         }
     } else {
+        ofLogError("ofxOscRouterBaseNode") << "getArgAsBoolean: Index " << index << " out of bounds!";
         return false;
     }
 }
 
 //--------------------------------------------------------------
 float ofxOscRouterBaseNode::getArgAsFloatUnchecked(const ofxOscMessage& m, int index) {
-    ofxOscArgType argType = m.getArgType(index);
-    if(argType == OFXOSC_TYPE_INT32) {
-        return (float)m.getArgAsInt32(index);
-    } else if(argType == OFXOSC_TYPE_FLOAT) {
-        return (float)m.getArgAsFloat(index);
+    if(index >= 0 && index < m.getNumArgs()) {
+        ofxOscArgType argType = m.getArgType(index);
+        if(argType == OFXOSC_TYPE_INT32) {
+            return (float)m.getArgAsInt32(index);
+        } else if(argType == OFXOSC_TYPE_FLOAT) {
+            return (float)m.getArgAsFloat(index);
+        } else {
+            ofLogError("ofxOscRouterBaseNode") << "getArgAsFloatUnchecked: invalid arg type. returning 0.0f";
+            return 0.0f;
+        }
     } else {
-        ofLog(OF_LOG_ERROR, "getArgAsFloatUnchecked: invalid arg type. returning 0.0f");
+        ofLogError("ofxOscRouterBaseNode") << "getArgAsFloatUnchecked: Index " << index << " out of bounds!";
         return 0.0f;
     }
 }
 
 //--------------------------------------------------------------
 int ofxOscRouterBaseNode::getArgAsIntUnchecked(const ofxOscMessage& m, int index) {
-    ofxOscArgType argType = m.getArgType(index);
-    if(argType == OFXOSC_TYPE_INT32) {
-        return (int)m.getArgAsInt32(index);
-    } else if(argType == OFXOSC_TYPE_FLOAT) {
-        return (int)m.getArgAsFloat(index);
+    if(index >= 0 && index < m.getNumArgs()) {
+        ofxOscArgType argType = m.getArgType(index);
+        if(argType == OFXOSC_TYPE_INT32) {
+            return m.getArgAsInt32(index);
+        } else if(argType == OFXOSC_TYPE_FLOAT) {
+            return m.getArgAsFloat(index);
+        } else {
+            ofLogError("ofxOscRouterBaseNode") << "getArgAsIntUnchecked: Unknown argType = " << argType;
+            return 0;
+        }
     } else {
-        ofLog(OF_LOG_ERROR, "getArgAsIntUnchecked: invalid arg type. returning 0.0f");
-        return 0.0f;
+        ofLogError("ofxOscRouterBaseNode") << "getArgAsIntUnchecked: Index " << index << " out of bounds!";
+        return 0;
     }
 }
 
 //--------------------------------------------------------------
 string ofxOscRouterBaseNode::getArgAsStringUnchecked(const ofxOscMessage& m, int index) {
-    ofxOscArgType argType = m.getArgType(index);
-    if(argType == OFXOSC_TYPE_INT32) {
-        return ofToString(m.getArgAsInt32(index));
-    } else if(argType == OFXOSC_TYPE_FLOAT) {
-        return ofToString(m.getArgAsFloat(index));
-    } else if(argType == OFXOSC_TYPE_STRING) {
-        return m.getArgAsString(index);
+    if(index >= 0 && index < m.getNumArgs()) {
+        ofxOscArgType argType = m.getArgType(index);
+        if(argType == OFXOSC_TYPE_INT32) {
+            return ofToString(m.getArgAsInt32(index));
+        } else if(argType == OFXOSC_TYPE_FLOAT) {
+            return ofToString(m.getArgAsFloat(index));
+        } else if(argType == OFXOSC_TYPE_STRING) {
+            return m.getArgAsString(index);
+        } else {
+            ofLogError("ofxOscRouterBaseNode") << "getArgAsStringUnchecked: invalid arg type. returning empty string.";
+            return "";
+        }
     } else {
-        ofLog(OF_LOG_ERROR, "getArgAsStringUnchecked: invalid arg type. returning 0.0f");
-        return "NULL";
+        ofLogError("ofxOscRouterBaseNode") << "getArgAsIntUnchecked: Index " << index << " out of bounds!";
+        return "";
     }
 }
 
 //--------------------------------------------------------------
-ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIndex) {
+ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int index) {
+    return getArgsAsColor(m,index,m.getNumArgs());
+}
+
+//--------------------------------------------------------------
+ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int index) {
+    return getArgsAsPoint(m,index,m.getNumArgs());
+}
+
+//--------------------------------------------------------------
+ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIndex, int endIndex) {
+    vector<float> args = getArgsAsFloatArray(m,startIndex,endIndex);
     ofColor color;
-    if(startIndex < m.getNumArgs()) {
-        vector<float> args = getArgsAsFloatArray(m,startIndex);
-        if(args.size() == 1) {
-            color.set(args[0]);
-        } else if(args.size() == 2) {
-            color.set(args[0],args[1]);
-        } else if(args.size() == 3) {
-            color.set(args[0],args[1],args[2]);
-        } else if(args.size() == 4) {
-            color.set(args[0],args[1],args[2],args[3]);
-            if(args.size() > 4) {
-                ofLog(OF_LOG_ERROR, "getArgsAsColor: more than 4 args for color, ignoring.");
-            }
-        } 
+    if(args.size() < 1) {
+        ofLogError("ofxOscRouterBaseNode") << "getArgsAsColor: no args to parse, returning 0 color.";
+        return color;
+    } else if(args.size() < 2) {
+        color.set(args[0]);
+        return color;
+    } else if(args.size() < 3) {
+        color.set(args[0],args[1]);
+        return color;
+    } else if(args.size() < 4) {
+        color.set(args[0],args[1],args[2]);
+        return color;
     } else {
-        ofLog(OF_LOG_ERROR, "getArgsAsColor: no args to parse.");
+        color.set(args[0],args[1],args[2],args[3]);
+        if(args.size() > 4) {
+            ofLogWarning("ofxOscRouterBaseNode") << "getArgsAsColor: more than 4 args for color, ignoring extras.";
+        }
+        return color;
     }
-    return color;
 }
 
 //--------------------------------------------------------------
-ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int startIndex) {
+ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int startIndex, int endIndex) {
+    vector<float> args = getArgsAsFloatArray(m,startIndex,endIndex);
     ofPoint point;
-    if(startIndex < m.getNumArgs()) {
-        vector<float> args = getArgsAsFloatArray(m,startIndex);
-        if(args.size() == 1) {
-            point.set(args[0]);
-        } else if(args.size() == 2) {
-            point.set(args[0],args[1]);
-        } else if(args.size() == 3) {
-            point.set(args[0],args[1],args[2]);
-            if(args.size() > 3) {
-                ofLog(OF_LOG_ERROR, "getArgsAsPoint: more than 3 args for point, ignoring extras.");
-            }
-        } 
+    if(args.size() < 1) {
+        ofLogError("ofxOscRouterBaseNode") << "getArgsAsPoint: no args to parse, returning 0,0,0 point.";
+        return point;
+    } else if(args.size() < 2) {
+        point.set(args[0]);
+        return point;
+    } else if(args.size() < 3) {
+        point.set(args[0],args[1]);
+        return point;
     } else {
-        ofLog(OF_LOG_ERROR, "getArgsAsPoint: no args to parse.");
+        point.set(args[0],args[1],args[2]);
+        if(args.size() > 3) {
+            ofLogWarning("ofxOscRouterBaseNode") << "getArgsAsPoint: more than 3 args for point, ignoring extras.";
+        }
+        return point;
     }
-    return point;
+}
+
+//--------------------------------------------------------------
+vector<bool> ofxOscRouterBaseNode::getArgsAsBoolArray(const ofxOscMessage& m, int index, int endIndex) {
+    vector<bool> array;
+    if(index < 0) {
+        ofLogError("ofxOscRouterBaseNode") << m.getAddress() << ": Invalid index < 0";
+        return array;
+    }
+    
+    endIndex = MAX(endIndex, index);
+    
+    for(int i = index; i < endIndex; i++) {
+        array.push_back(getArgAsBoolUnchecked(m, i));
+    }
+    
+    return array;
+}
+
+
+//--------------------------------------------------------------
+vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, int index, int endIndex) {
+    vector<float> array;
+    if(index < 0) {
+        ofLogError("ofxOscRouterBaseNode") << m.getAddress() << ": Invalid index < 0";
+        return array;
+    }
+    
+    endIndex = MAX(endIndex, index);
+    
+    cout << "index=" << index << " endIndex = " << endIndex << endl;
+    
+    for(int i = index; i < endIndex; i++) {
+        array.push_back(getArgAsFloatUnchecked(m, i));
+    }
+    
+    return array;
+}
+
+//--------------------------------------------------------------
+vector<int> ofxOscRouterBaseNode::getArgsAsIntArray(const ofxOscMessage& m, int index, int endIndex) {
+    vector<int> array;
+    if(index < 0) {
+        ofLogError("ofxOscRouterBaseNode") << m.getAddress() << ": Invalid index < 0";
+        return array;
+    }
+    
+    endIndex = MAX(endIndex, index);
+    
+    for(int i = index; i < endIndex; i++) {
+        array.push_back(getArgAsIntUnchecked(m, i));
+    }
+    
+    return array;
+}
+
+//--------------------------------------------------------------
+vector<string> ofxOscRouterBaseNode::getArgsAsStringArray(const ofxOscMessage& m, int index, int endIndex) {
+    vector<string> array;
+    if(index < 0) {
+        ofLogError("ofxOscRouterBaseNode") << m.getAddress() << ": Invalid index < 0";
+        return array;
+    }
+    
+    endIndex = MAX(endIndex, index);
+    
+    for(int i = index; i < endIndex; i++) {
+        array.push_back(getArgAsStringUnchecked(m, i));
+    }
+    
+    return array;
+}
+
+//--------------------------------------------------------------
+vector<bool> ofxOscRouterBaseNode::getArgsAsBoolArray(const ofxOscMessage& m, int index) {
+    return getArgsAsBoolArray(m,index,m.getNumArgs());
 }
 
 //--------------------------------------------------------------
 vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, int index) {
-    vector<float> array;
-    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsFloatUnchecked(m,i));
-    return array;
+    return getArgsAsFloatArray(m,index,m.getNumArgs());
 }
 
 //--------------------------------------------------------------
 vector<int> ofxOscRouterBaseNode::getArgsAsIntArray(const ofxOscMessage& m, int index) {
-    vector<int> array;
-    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsIntUnchecked(m,i));
-    return array;
+    return getArgsAsIntArray(m,index,m.getNumArgs());
 }
 
 //--------------------------------------------------------------
 vector<string> ofxOscRouterBaseNode::getArgsAsStringArray(const ofxOscMessage& m, int index) {
-    vector<string> array;
-    for(int i = index; i < m.getNumArgs(); i++) array.push_back(getArgAsStringUnchecked(m,i));
-    return array;
+    return getArgsAsStringArray(m,index,m.getNumArgs());
 }
 
 //--------------------------------------------------------------
 bool ofxOscRouterBaseNode::validateOscSignature(const string& signature, const ofxOscMessage& m) {
     
-    string mSignature = "";
+    stringstream mSignature;
     // make the signature
     for(int i=0; i < m.getNumArgs(); i++) {
-        mSignature+=m.getArgTypeName(i).at(0);
+        mSignature << m.getArgTypeName(i).at(0);
     }
     
     RegularExpression re(signature);
-    bool match = re.match(mSignature);
+    bool match = re.match(mSignature.str());
     
     if(!match) {
-        ofLog(OF_LOG_ERROR, m.getAddress() + ": Signature: " + signature + " did not match mSignature= " + mSignature);
+        ofLogError("ofxOscRouterBaseNode") << "validateOscSignature: " << m.getAddress() << ": Signature: " << signature << " did not match mSignature= " << mSignature;
     }
     
     return match;
