@@ -1,27 +1,3 @@
-/*==============================================================================
- 
- Copyright (c) 2010, 2011, 2012 Christopher Baker <http://christopherbaker.net>
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- 
- ==============================================================================*/
-
 #include "ofxOscRouterBaseNode.h"
 
 bool stringSortNormal        (const string& s0, const string& s1) { return (s0 < s1); }
@@ -29,22 +5,22 @@ bool stringSortReverse       (const string& s0, const string& s1) { return (s0 >
 bool stringSortLengthNormal  (const string& s0, const string& s1) { return (s0.length() < s1.length() ); }
 bool stringSortLengthReverse (const string& s0, const string& s1) { return (s0.length() > s1.length() ); }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofxOscRouterBaseNode::ofxOscRouterBaseNode() {
     bNodeActive = true;
 }
 
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //ofxOscRouterBaseNode::ofxOscRouterBaseNode(ofxOscRouterBaseNode* _oscParent, string _oscNodeName) {
 //    addOscParent(_oscParent);
 //    addOscNodeAlias(_oscNodeName);
 //}
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofxOscRouterBaseNode::~ofxOscRouterBaseNode() {}
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage& m) {
     
     if(!isNodeActive()) return; // bail if this node is active
@@ -181,12 +157,12 @@ void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage&
 
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasParents() const {
     return !oscParents.empty();
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() {
     if(hasParents()) {
         return *oscParents.begin();
@@ -195,7 +171,7 @@ ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() const {
     if(hasParents()) {
         return *oscParents.begin();
@@ -205,7 +181,7 @@ const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscParent() const {
 }
 
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() {
     if(hasChildren()) {
         return *oscChildren.rbegin();
@@ -214,7 +190,7 @@ ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() const {
     if(hasChildren()) {
         return *oscChildren.rbegin();
@@ -224,22 +200,22 @@ const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getLastOscParent() const {
 }
 
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //vector<ofxOscRouterBaseNode*> ofxOscRouterBaseNode::getOscParents() const {
 //    return oscParents.toArray();
 //}
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscParent(ofxOscRouterBaseNode* _oscParent) const {
     return _oscParent != NULL && oscParents.find(_oscParent) != oscParents.end();
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::addOscParent(ofxOscRouterBaseNode* _oscParent) {
     return oscParents.insert(_oscParent).second;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::removeOscParent(ofxOscRouterBaseNode* _oscParent) {
     if(hasOscParent(_oscParent)) {
         oscParents.erase(_oscParent);
@@ -249,7 +225,7 @@ bool ofxOscRouterBaseNode::removeOscParent(ofxOscRouterBaseNode* _oscParent) {
     }
 }
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //vector<ofxOscRouterBaseNode*> ofxOscRouterBaseNode::getOscSiblings() const {
 //    vector<ofxOscRouterBaseNode*> oscSiblings;
 //    if(!oscParents.isEmpty()) {
@@ -268,14 +244,14 @@ bool ofxOscRouterBaseNode::removeOscParent(ofxOscRouterBaseNode* _oscParent) {
 //    }
 //}
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 // recursively locate the root node
 ofxOscRouterBaseNode* ofxOscRouterBaseNode::getOscRoot() {
     ofxOscRouterBaseNode* parent = getFirstOscParent();
     return parent != NULL ? parent->getOscRoot() : parent;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::getFirstOscNodeAlias() const {
     const set<string>& aliasesRef = getOscNodeAliasesRef();
     if(!aliasesRef.empty()) {
@@ -286,7 +262,7 @@ string ofxOscRouterBaseNode::getFirstOscNodeAlias() const {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::getLastOscNodeAlias() const {
     const set<string>& aliasesRef = getOscNodeAliasesRef();
     if(!aliasesRef.empty()) {
@@ -298,7 +274,7 @@ string ofxOscRouterBaseNode::getLastOscNodeAlias() const {
 }
 
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscNodeAlias(const string& alias) const {
     const set<string>& aliasesRef = getOscNodeAliasesRef();
     return aliasesRef.find(alias) != aliasesRef.end();
@@ -319,7 +295,7 @@ bool ofxOscRouterBaseNode::hasOscNodeAlias(const string& alias) const {
  */
 
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasChildren() const {
     return !oscChildren.empty();
 }
@@ -335,13 +311,13 @@ bool ofxOscRouterBaseNode::hasChildWithAlias(const string& name) const {
     return false;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasChildWithAlias(const set<string>& theOtherAliases) const {
     string clashName = "";
     return hasChildWithAlias(theOtherAliases, clashName);
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasChildWithAlias(const set<string>& theOtherAliases, string& clashName) const {
     // seems like this could be done with set_intersection ...
     set<ofxOscRouterBaseNode*>::iterator it;
@@ -378,7 +354,7 @@ bool ofxOscRouterBaseNode::hasChildWithAlias(const set<string>& theOtherAliases,
     return false;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() {
     if(hasChildren()) {
         return *oscChildren.begin();
@@ -387,7 +363,7 @@ ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() const {
     if(hasChildren()) {
         return *oscChildren.begin();
@@ -396,22 +372,22 @@ const ofxOscRouterBaseNode* ofxOscRouterBaseNode::getFirstOscChild() const {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 set<ofxOscRouterBaseNode*>& ofxOscRouterBaseNode::getOscChildrenRef() {
     return oscChildren;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 const set<ofxOscRouterBaseNode*>& ofxOscRouterBaseNode::getOscChildrenRef() const {
     return oscChildren;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscChild(ofxOscRouterBaseNode* oscChild) const {
     return oscChild != NULL && oscChildren.find(oscChild) != oscChildren.end();
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNode* oscChild) {
     if(oscChild == NULL) {
         ofLogError("ofxOscRouterBaseNode") << "addOscChild: Failed to add OSC Child.  Child was NULL.";
@@ -451,7 +427,7 @@ bool ofxOscRouterBaseNode::ofxOscRouterBaseNode::addOscChild(ofxOscRouterBaseNod
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::removeOscChild(ofxOscRouterBaseNode* oscChild) {
     if(hasOscChild(oscChild)) {
         oscChild->removeOscParent(this);
@@ -464,29 +440,29 @@ bool ofxOscRouterBaseNode::removeOscChild(ofxOscRouterBaseNode* oscChild) {
 
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 set<string>& ofxOscRouterBaseNode::getOscMethodsRef() {
     return oscMethods;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 const set<string>& ofxOscRouterBaseNode::getOscMethodsRef() const {
     return oscMethods;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::hasOscMethod(const string& _method) const {
     return !_method.empty() && oscMethods.find(_method) != oscMethods.end();
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::addOscMethod(const string& _method) {
     bool success = oscMethods.insert(_method).second;
     if(!success) ofLogWarning("ofxOscRouterBaseNode") << "addOscMethod : method=" <<  _method << " already exists.";
     return success;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::removeOscMethod(const string& _command) {
     if(hasOscMethod(_command)) {
         oscMethods.erase(_command);
@@ -496,27 +472,27 @@ bool ofxOscRouterBaseNode::removeOscMethod(const string& _command) {
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::isNodeActive() const {
     return bNodeActive;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ofxOscRouterBaseNode::setNodeActive(bool _bNodeEnabled) {
     bNodeActive = _bNodeEnabled;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::getFirstOscPath() const {
     return (hasParents() ? getFirstOscParent()->getFirstOscPath() : "/" + getFirstOscNodeAlias() + "/");
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::getLastOscPath() const {
     return (hasParents() ? getLastOscParent()->getLastOscPath() : "/" + getLastOscNodeAlias() + "/");
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 //bool ofxOscRouterBaseNode::addOscPlugMethod(string _method, NoArgPlugFunc func) {
 //    if(!hasOscMethod(_method) && addOscMethod(_method)) {
 //        noArgPlugFuncMap[_method] = func;
@@ -526,7 +502,7 @@ string ofxOscRouterBaseNode::getLastOscPath() const {
 //    }
 //}
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 //bool ofxOscRouterBaseNode::addOscPlugMethod(string _method, OscMessagePlugFunc func) {
 //    if(!hasOscMethod(_method) && addOscMethod(_method)) {
 //        oscMessagePlugFuncMap[_method] = func;
@@ -537,7 +513,7 @@ string ofxOscRouterBaseNode::getLastOscPath() const {
 //}
 
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //bool ofxOscRouterBaseNode::hasOscPlugMethod(string _method) {
 //    
 //    noArgPlugFuncMapIter = noArgPlugFuncMap.find(_method);
@@ -553,14 +529,14 @@ string ofxOscRouterBaseNode::getLastOscPath() const {
 //    return false;
 //}
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //bool ofxOscRouterBaseNode::removeOscPlugMethod(string _method) {
 //    noArgPlugFuncMap.erase(_method);
 //    oscMessagePlugFuncMap.erase(_method);
 //    return true;
 //}
 
-////--------------------------------------------------------------
+////------------------------------------------------------------------------------
 //bool ofxOscRouterBaseNode::executeOscPlugMethod(string _method, const ofxOscMessage& m) {
 //
 //    bool foundOne = false;
@@ -581,15 +557,15 @@ string ofxOscRouterBaseNode::getLastOscPath() const {
 //}
 
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::normalizeOscNodeName(const string& name) {
     string theName = name;
     RegularExpression re("[ #*,/?\\[\\]\\{\\}]");
-    int numReplaced = re.subst(theName, "_", RegularExpression::RE_GLOBAL);
+    /*int numReplaced = */re.subst(theName, "_", RegularExpression::RE_GLOBAL);
     return theName;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::isValidOscNodeName(const string& name) {
     // TODO ... ugly.
     string theName = name;
@@ -597,15 +573,15 @@ bool ofxOscRouterBaseNode::isValidOscNodeName(const string& name) {
     return re.subst(theName, "_", RegularExpression::RE_GLOBAL) <= 0;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::normalizeOscCommand(const string& name) {
     string theName = name;
     RegularExpression re("[ #*,/?\\[\\]\\{\\}]");
-    int numReplaced = re.subst(theName, "_", RegularExpression::RE_GLOBAL);
+    /*int numReplaced */re.subst(theName, "_", RegularExpression::RE_GLOBAL);
     return theName;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::isValidOscCommand(const string& name) {
     // TODO ... ugly.
     string theName = name;
@@ -613,12 +589,12 @@ bool ofxOscRouterBaseNode::isValidOscCommand(const string& name) {
     return re.subst(theName, "_", RegularExpression::RE_GLOBAL) <= 0;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::isMatch(const string& s0, const string& s1) {
     return icompare(s0,s1) == 0;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::getArgAsBoolUnchecked(const ofxOscMessage& m, int index) {
     if(index >= 0 && index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
@@ -642,7 +618,7 @@ bool ofxOscRouterBaseNode::getArgAsBoolUnchecked(const ofxOscMessage& m, int ind
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 float ofxOscRouterBaseNode::getArgAsFloatUnchecked(const ofxOscMessage& m, int index) {
     if(index >= 0 && index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
@@ -660,7 +636,7 @@ float ofxOscRouterBaseNode::getArgAsFloatUnchecked(const ofxOscMessage& m, int i
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 int ofxOscRouterBaseNode::getArgAsIntUnchecked(const ofxOscMessage& m, int index) {
     if(index >= 0 && index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
@@ -678,7 +654,7 @@ int ofxOscRouterBaseNode::getArgAsIntUnchecked(const ofxOscMessage& m, int index
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 string ofxOscRouterBaseNode::getArgAsStringUnchecked(const ofxOscMessage& m, int index) {
     if(index >= 0 && index < m.getNumArgs()) {
         ofxOscArgType argType = m.getArgType(index);
@@ -698,17 +674,17 @@ string ofxOscRouterBaseNode::getArgAsStringUnchecked(const ofxOscMessage& m, int
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int index) {
     return getArgsAsColor(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int index) {
     return getArgsAsPoint(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIndex, int endIndex) {
     vector<float> args = getArgsAsFloatArray(m,startIndex,endIndex);
     ofColor color;
@@ -733,7 +709,7 @@ ofColor ofxOscRouterBaseNode::getArgsAsColor(const ofxOscMessage& m, int startIn
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int startIndex, int endIndex) {
     vector<float> args = getArgsAsFloatArray(m,startIndex,endIndex);
     ofPoint point;
@@ -755,7 +731,7 @@ ofPoint ofxOscRouterBaseNode::getArgsAsPoint(const ofxOscMessage& m, int startIn
     }
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<bool> ofxOscRouterBaseNode::getArgsAsBoolArray(const ofxOscMessage& m, int index, int endIndex) {
     vector<bool> array;
     if(index < 0) {
@@ -773,7 +749,7 @@ vector<bool> ofxOscRouterBaseNode::getArgsAsBoolArray(const ofxOscMessage& m, in
 }
 
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, int index, int endIndex) {
     vector<float> array;
     if(index < 0) {
@@ -790,7 +766,7 @@ vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, 
     return array;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<int> ofxOscRouterBaseNode::getArgsAsIntArray(const ofxOscMessage& m, int index, int endIndex) {
     vector<int> array;
     if(index < 0) {
@@ -807,7 +783,7 @@ vector<int> ofxOscRouterBaseNode::getArgsAsIntArray(const ofxOscMessage& m, int 
     return array;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<string> ofxOscRouterBaseNode::getArgsAsStringArray(const ofxOscMessage& m, int index, int endIndex) {
     vector<string> array;
     if(index < 0) {
@@ -824,27 +800,38 @@ vector<string> ofxOscRouterBaseNode::getArgsAsStringArray(const ofxOscMessage& m
     return array;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<bool> ofxOscRouterBaseNode::getArgsAsBoolArray(const ofxOscMessage& m, int index) {
     return getArgsAsBoolArray(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<float> ofxOscRouterBaseNode::getArgsAsFloatArray(const ofxOscMessage& m, int index) {
     return getArgsAsFloatArray(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<int> ofxOscRouterBaseNode::getArgsAsIntArray(const ofxOscMessage& m, int index) {
     return getArgsAsIntArray(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 vector<string> ofxOscRouterBaseNode::getArgsAsStringArray(const ofxOscMessage& m, int index) {
     return getArgsAsStringArray(m,index,m.getNumArgs());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
+string ofxOscRouterBaseNode::getMessageAsString(const ofxOscMessage& m) {
+    stringstream ss;
+    ss << m.getAddress() << ":";
+    ss << m.getRemoteIp() << ":";
+    ss << m.getRemotePort() << ":";
+    ss << m.getNumArgs() << ":";
+    // TODO: ?
+    return ss.str();
+}
+
+//------------------------------------------------------------------------------
 bool ofxOscRouterBaseNode::validateOscSignature(const string& signature, const ofxOscMessage& m) {
     
     stringstream mSignature;

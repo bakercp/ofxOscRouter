@@ -1,6 +1,6 @@
 /*==============================================================================
  
- Copyright (c) 2010, 2011, 2012 Christopher Baker <http://christopherbaker.net>
+ Copyright (c) 2010 - 2013 Christopher Baker <http://christopherbaker.net>
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,19 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  
- ==============================================================================*/
+ =============================================================================*/
+
 
 #pragma once
 
 #include <map>
 #include <set>
 
-#include "ofMain.h"
-#include "ofxOsc.h"
-#include "ofxOscRouterBaseNode.h"
 #include "Poco/RegularExpression.h"
 #include "Poco/String.h"
 
-
+#include "ofxOsc.h"
+#include "ofxOscRouterBaseNode.h"
 
 // tr1 stuff, for function callbacks
 #if (_MSC_VER)
@@ -55,11 +54,12 @@
 typedef function<void ()> NoArgPlugFunc;
 typedef function<void (const ofxOscMessage& m)> OscMessagePlugFunc;
 
-extern "C" {    
+//extern "C" {    
     #include "osc_match.h"
-}
+//}
 
 using namespace std;
+
 using Poco::RegularExpression;
 using Poco::toUpper;
 using Poco::toLower;
@@ -152,7 +152,7 @@ public:
     
     string schemaToString(int& level) const {
         level++;
-        int tab = 4 * level;
+        //int tab = 4 * level;
         
         stringstream ss;
         
@@ -208,6 +208,8 @@ public:
     static vector<int>    getArgsAsIntArray(const ofxOscMessage& m, int index);
     static vector<string> getArgsAsStringArray(const ofxOscMessage& m, int index);
 
+    static string getMessageAsString(const ofxOscMessage& m);
+    
 protected:
     
     bool bNodeActive;
