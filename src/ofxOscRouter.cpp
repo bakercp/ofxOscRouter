@@ -41,6 +41,6 @@ void ofxOscRouter::setPort(int port) {
 }
 
 //------------------------------------------------------------------------------
-ofxOscReceiver& ofxOscRouter::getOscReciever() {
+ofxOscReceiver& ofxOscRouter::getOscReceiver() {
     return receiver;
 }

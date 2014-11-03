@@ -38,7 +38,7 @@ void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage&
     string::size_type offset = fullAddress.find( patternAddress, 0 );
     if( offset != string::npos ) {
         level = std::count(fullAddress.begin(), fullAddress.begin() + offset, '/');
-        tabs = string(level*2,'\t');
+        tabs = string(level,'\t');
     } else {
         level = 0;
     }
@@ -76,7 +76,7 @@ void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage&
         
 //        for(aliasIter = aliasesRef.begin(); aliasIter != aliasesRef.end(); aliasIter++) {
             string alias = (*aliasIter);
-            ofLog(OF_LOG_VERBOSE, tabs + "/"+ alias + " match? " + pattern);
+            ofLogVerbose("ofxOscRouterBaseNode") << tabs << "alias /" << alias << " match? : " << pattern;
 
             //string alias = aliases[i];
             pattrOffset = 0;
@@ -84,19 +84,19 @@ void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage&
             matchResult = 0;
             char* _thisAlias = (char*)("/"+alias).c_str();
             matchResult = osc_match(_pattern, _thisAlias, &pattrOffset, &addrOffset);
-            
-            if(matchResult != 0) {
+
+            if(matchResult != OSC_MATCH_NONE) {
                 matchedNodeAlias = alias;
                 break;
             }
         }
         
     } else {
-        ofLog(OF_LOG_ERROR, tabs + "ofxOscRouterBaseNode: This node " + getFirstOscNodeAlias() + " has no aliases: " + m.getAddress());
+        ofLogError("ofxOscRouterBaseNode") << tabs << "The node " << getFirstOscNodeAlias() << " has no aliases: " << m.getAddress();
     }
 
     if(matchResult == OSC_MATCH_NONE) {
-        ofLog(OF_LOG_VERBOSE, tabs + "ofxOscRouterBaseNode: No match for: " + m.getAddress());
+        ofLogVerbose("ofxOscRouterBaseNode") << tabs << getFirstOscNodeAlias() << " don't match for " << m.getAddress();
         return;
     } else {
         
@@ -151,7 +151,7 @@ void ofxOscRouterBaseNode::routeOscMessage(const string& pattern, ofxOscMessage&
                 
             }
         } else {
-            ofLog(OF_LOG_ERROR, tabs + "ofxOscRouterBaseNode: Unknown osc_match result.");
+            ofLogError("ofxOscRouterBaseNode") << tabs << "Unknown osc_match result.";
         }
     }
 
