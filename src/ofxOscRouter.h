@@ -40,9 +40,9 @@ public:
     void setPort(int port);
     
     void processOscCommand(const string& command, const ofxOscMessage& m);
-	
-    ofxOscReceiver& getOscReciever();
-	
+
+    ofxOscReceiver& getOscReceiver();
+
     //bool plug(string nodeAddress, ofxOscRouterBaseNode* node);
     //bool plug(string nodeAddress, string method, ofxOscRouterBaseNode* node, Function, function)
     
